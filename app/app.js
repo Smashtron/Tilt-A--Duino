@@ -10,8 +10,7 @@ serial_port.on("data", function (data) {
 	var newString = data.toString('ascii');
 	for(var i = 0; i < newString.length; i++) {
 		if(newString[i]==";") {
-			io.sockets.clients().forEach(function (socket) { socket.emit('joystick',output) });
-			console.log(output+" "+io.sockets.sockets.length);
+			io.sockets.clients().forEach(function (socket) { socket.emit('nunchuck',output) });
 			output = "";
 		} else {
 			output += newString[i];

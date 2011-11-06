@@ -6,15 +6,29 @@
 <script>
 $(document).ready(function(){
   var socket = io.connect('http://localhost:8888');
-  socket.on('joystick', function (data) {
+  socket.on('nunchuck', function (data) {
     response = $.parseJSON(data);
-    $('#box').css('left',response.joystick[0]);
-    $('#box').css('top',response.joystick[1]);
+    if(response.joystick) {
+	    $('#box').css('left',response.joystick[0]-130);
+	    $('#box').css('top',response.joystick[1]-130);
+	  }
+	  if(response.zbutton) {
+	  }
+	  if(response.cbutton) {
+	  }
   });
 })
 </script>
 
 <style>
+#container {
+	position:relative;
+	height:100px;
+	width:100px;
+	top:50%;
+	left:50%;
+	margin: -50px auto auto -50px;
+}
 #box {
 	position:absolute;
 	background-color:red;
@@ -25,6 +39,8 @@ $(document).ready(function(){
 </style>
 </head>
 <body>
+<div id="container">
 <div id="box"></div>
-</body>f
+</div>
+</body>
 </html>
