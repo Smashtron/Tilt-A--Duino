@@ -4,25 +4,52 @@
 <script src="http://localhost:8888/socket.io/socket.io.js"></script>
 
 <script>
-$(document).ready(function(){
+$(function(){
+	var viewport = {
+	    	x: -10, 
+			y: 20, 
+			el: $('#cube')[0],
+			move: function(coords) {
+				if(coords) {
+					if(typeof coords.x === "number") this.x = coords.x;
+					if(typeof coords.y === "number") this.y = coords.y;
+				}
+				this.el.style.webkitTransform = "rotateX("+this.x+"deg) rotateY("+this.y+"deg)";
+			},
+			reset: function() {
+				this.move({x: 0, y: 0});
+			}
+		};
+		
+	viewport.duration = function() {
+		var d = 0;
+		viewport.el.style.webkitTransitionDuration = d + "ms";
+		return d;
+	}();
+	
+	
   var socket = io.connect('http://localhost:8888');
   socket.on('nunchuck', function (data) {
-    response = $.parseJSON(data);
-    if(response.joystick) {
-	    $('#box').css('left',response.joystick[0]-130);
-	    $('#box').css('top',response.joystick[1]-130);
+    nunchuck = $.parseJSON(data);
+	  if(nunchuck.accelerometer) {}
+    if(nunchuck.joystick) {
+	    $('#box').css('left',nunchuck.joystick[0]-130);
+	    $('#box').css('top',nunchuck.joystick[1]-130);
+	    
+	    viewport.move({y: nunchuck.joystick[0]-130});
+	    viewport.move({x: nunchuck.joystick[1]-130});
 	  }
-	  if(response.zbutton) {
-	  }
-	  if(response.cbutton) {
-	  }
+	  if(nunchuck.z) {}
+	  if(nunchuck.c) {}
   });
-})
+  
+	
+});
 </script>
 
 <style>
-#container {
-	position:relative;
+#container1 {
+	position:absolute;
 	height:100px;
 	width:100px;
 	top:50%;
@@ -36,11 +63,102 @@ $(document).ready(function(){
 	height:100px;
 	border-radius:100px;
 }
+
+#container2 {
+	position:absolute;
+	height:400px;
+	width:400px;
+	top:50%;
+	left:50%;
+	margin: -200px auto auto -200px;
+}
+#viewport {
+-webkit-perspective: 800; 
+-webkit-perspective-origin: 50% 200px;
+-webkit-transform: scale(0.75,0.75);
+}
+
+#cube {
+position: relative;
+margin: 0 auto;
+height: 400px;
+width: 400px;
+-webkit-transition: -webkit-transform 50ms linear;
+-webkit-transform-style: preserve-3d;
+-webkit-transform: rotateX(-10deg) rotateY(20deg);
+}
+
+#cube h2 {
+color: #fff;
+padding-top: 0;
+margin-top: 0;
+}
+
+#cube a {
+color: #fff;
+}
+
+#cube > div {
+position: absolute;
+height: 360px;
+width: 360px;
+padding: 20px;
+background-color: rgba(50, 50, 50, 0.85);
+font-size: 1em;
+line-height: 1em;
+color: #fff;
+border: 1px solid #555;
+-webkit-border-radius: 3px;
+}   
+
+#cube > div:first-child  {
+-webkit-transform: rotateX(90deg) translateZ(200px);
+}
+
+#cube > div:nth-child(2) {
+-webkit-transform: translateZ(200px);
+}
+
+#cube > div:nth-child(3) {
+-webkit-transform: rotateY(90deg) translateZ(200px);
+text-align: center;
+}
+
+#cube > div:nth-child(4) {
+-webkit-transform: rotateY(180deg) translateZ(200px);
+}
+
+#cube > div:nth-child(5) {
+-webkit-transform: rotateY(-90deg) translateZ(200px);
+}
+
+#cube > div:nth-child(5) p {
+text-align: center;
+font-size: 2.77em;
+margin: 40px;
+}
+
+#cube > div:nth-child(6) {
+-webkit-transform: rotateX(-90deg) rotate(180deg) translateZ(200px) ;
+}
+
 </style>
 </head>
 <body>
-<div id="container">
+<div id="container1">
 <div id="box"></div>
+</div>
+
+<div id="container2">
+<article id="viewport">	
+	<section id="cube" style="-webkit-transition-duration: 500ms; -webkit-transform: rotateX(-5140deg) rotateY(20deg); ">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </section>	
+</article>
 </div>
 </body>
 </html>
